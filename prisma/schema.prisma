@@ -1,0 +1,174 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  ADMIN
+  CUSTOMER
+}
+
+enum ProductStatus {
+  DRAFT
+  PUBLISHED
+  HIDDEN
+}
+
+enum OrderStatus {
+  NEW
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  COMPLETED
+  RETURNED
+}
+
+enum PaymentMethod {
+  CARD
+  COD
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  REFUNDED
+}
+
+model User {
+  id           String   @id @default(uuid()) @db.Uuid
+  email        String   @unique
+  passwordHash String
+  name         String?
+  phone        String?
+  role         UserRole @default(CUSTOMER)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  orders       Order[]
+
+  @@map("users")
+}
+
+model Category {
+  id          String     @id @default(uuid()) @db.Uuid
+  name        String
+  slug        String     @unique
+  description String?
+  imageUrl    String?
+  sortOrder   Int        @default(0)
+  isActive    Boolean    @default(true)
+  parentId    String?    @db.Uuid
+  parent      Category?  @relation("CategoryTree", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryTree")
+  products    Product[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@map("categories")
+}
+
+model Product {
+  id          String         @id @default(uuid()) @db.Uuid
+  name        String
+  slug        String         @unique
+  description String?        @db.Text
+  price       Decimal        @db.Decimal(10, 2)
+  salePrice   Decimal?       @db.Decimal(10, 2)
+  sku         String         @unique @db.VarChar(100)
+  ean         String?        @db.VarChar(13)
+  stock       Int            @default(0)
+  weight      Decimal?       @db.Decimal(8, 3)
+  status      ProductStatus  @default(DRAFT)
+  categoryId  String         @db.Uuid
+  category    Category       @relation(fields: [categoryId], references: [id])
+  images      ProductImage[]
+  orderItems  OrderItem[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@map("products")
+}
+
+model ProductImage {
+  id        String  @id @default(uuid()) @db.Uuid
+  productId String  @db.Uuid
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  alt       String  @db.VarChar(255)
+  sortOrder Int     @default(0)
+
+  @@map("product_images")
+}
+
+model Order {
+  id              String          @id @default(uuid()) @db.Uuid
+  orderNumber     String          @unique
+  userId          String?         @db.Uuid
+  user            User?           @relation(fields: [userId], references: [id])
+  status          OrderStatus     @default(NEW)
+  subtotal        Decimal         @db.Decimal(10, 2)
+  shippingCost    Decimal         @db.Decimal(10, 2)
+  total           Decimal         @db.Decimal(10, 2)
+  paymentMethod   PaymentMethod
+  paymentStatus   PaymentStatus   @default(PENDING)
+  shippingMethod  String          @db.VarChar(100)
+  notes           String?         @db.Text
+  awbNumber       String?         @db.VarChar(100)
+  awbPdfUrl       String?
+  invoiceNumber   String?         @db.VarChar(100)
+  courierProvider String?         @db.VarChar(100)
+  items           OrderItem[]
+  shippingAddress ShippingAddress?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id          String  @id @default(uuid()) @db.Uuid
+  orderId     String  @db.Uuid
+  order       Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId   String  @db.Uuid
+  product     Product @relation(fields: [productId], references: [id])
+  productName String
+  productSku  String
+  productEan  String?
+  quantity    Int
+  unitPrice   Decimal @db.Decimal(10, 2)
+  totalPrice  Decimal @db.Decimal(10, 2)
+
+  @@map("order_items")
+}
+
+model ShippingAddress {
+  id          String  @id @default(uuid()) @db.Uuid
+  orderId     String  @unique @db.Uuid
+  order       Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  fullName    String
+  phone       String
+  email       String
+  street      String
+  city        String
+  county      String
+  postalCode  String
+  companyName String?
+  cui         String?
+  regCom      String?
+  isBusiness  Boolean @default(false)
+
+  @@map("shipping_addresses")
+}
+
+model SiteSetting {
+  id    String @id @default(uuid()) @db.Uuid
+  key   String @unique @db.VarChar(100)
+  value String @db.Text
+  group String @db.VarChar(50)
+
+  @@map("site_settings")
+}
