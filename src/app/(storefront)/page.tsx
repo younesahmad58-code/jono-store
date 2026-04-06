@@ -1,5 +1,5 @@
-import { getParentCategories, getNewProducts, getProductsOnSale } from "@/lib/queries";
-import { HeroBanner, TrustBadges, CategoryGrid, ProductCarousel, WholesaleCTA } from "@/components/storefront/home";
+import { getBestsellers, getTrendingProducts, getProductsOnSale, getRecommendedProducts, getPetCategoryIds, getParentCategories } from "@/lib/queries";
+import { HomepageHero, TrustBadges, ProductCarousel, WholesaleCTA, CategoryGrid, PromoBanners } from "@/components/storefront/home";
 
 export const dynamic = "force-dynamic";
 
@@ -26,32 +26,64 @@ function serializeProduct(p: {
 }
 
 export default async function HomePage() {
-  const [categories, newProducts, saleProducts] = await Promise.all([
+  const petCategoryIds = await getPetCategoryIds();
+
+  const [bestsellers, trending, saleProducts, recommended, allCategories] = await Promise.all([
+    getBestsellers(10, petCategoryIds),
+    getTrendingProducts(10, petCategoryIds),
+    getProductsOnSale(10, petCategoryIds),
+    getRecommendedProducts(10, petCategoryIds),
     getParentCategories(),
-    getNewProducts(10),
-    getProductsOnSale(10),
   ]);
 
-  const categoriesData = categories.map((c) => ({
-    id: c.id,
-    name: c.name,
-    slug: c.slug,
-    imageUrl: c.imageUrl,
-  }));
+  const mainSaleProducts = saleProducts.filter(
+    (p) => !petCategoryIds.includes(p.categoryId)
+  );
+
+  const mainCategories = allCategories
+    .filter((c) => !petCategoryIds.includes(c.id))
+    .map((c) => ({
+      id: c.id,
+      name: c.name,
+      slug: c.slug,
+      imageUrl: c.imageUrl,
+      children: c.children.map((ch) => ({ id: ch.id, name: ch.name, slug: ch.slug })),
+    }));
 
   return (
     <>
-      <HeroBanner />
+      <HomepageHero categories={mainCategories} />
+
       <TrustBadges />
-      <CategoryGrid categories={categoriesData} />
+
+      <CategoryGrid categories={mainCategories} />
+
       <ProductCarousel
-        title="NOUTĂȚI"
-        products={newProducts.map(serializeProduct)}
+        title="Cele mai vândute"
+        href="/categorii?filter=bestseller"
+        products={bestsellers.map(serializeProduct)}
       />
+
+      <PromoBanners />
+
       <ProductCarousel
-        title="OFERTE"
-        products={saleProducts.map(serializeProduct)}
+        title="Produse în Trend"
+        href="/categorii?filter=trending"
+        products={trending.map(serializeProduct)}
       />
+
+      <ProductCarousel
+        title="Produse în Promoții"
+        href="/categorii?filter=promotii"
+        products={mainSaleProducts.map(serializeProduct)}
+      />
+
+      <ProductCarousel
+        title="Recomandate de Noi"
+        href="/categorii?filter=recomandate"
+        products={recommended.map(serializeProduct)}
+      />
+
       <WholesaleCTA />
     </>
   );

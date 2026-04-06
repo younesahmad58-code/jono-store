@@ -11,11 +11,11 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "AramSweet — Dulciuri Artizanale",
-    template: "%s | AramSweet",
+    default: "JONO — Magazin Online",
+    template: "%s | JONO",
   },
   description:
-    "Magazin online de dulciuri artizanale, prăjituri, torturi și deserturi speciale. Livrare rapidă în toată România.",
+    "JONO — magazin online cu produse de calitate la prețuri corecte. Livrare rapidă în toată România.",
 };
 
 export default function RootLayout({

@@ -3,11 +3,15 @@ export {
   getCategoryBySlug,
   getCategoryTree,
   getAllCategories,
+  getPetCategoryIds,
 } from "./categories";
 
 export {
   getNewProducts,
   getProductsOnSale,
+  getBestsellers,
+  getTrendingProducts,
+  getRecommendedProducts,
   getProductBySlug,
   getProductsByCategory,
   getSimilarProducts,

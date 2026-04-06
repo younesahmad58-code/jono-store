@@ -17,9 +17,10 @@ interface Subcategory {
 interface CategorySidebarProps {
   parentSlug: string;
   subcategories: Subcategory[];
+  pathPrefix?: string;
 }
 
-export function CategorySidebar({ parentSlug, subcategories }: CategorySidebarProps) {
+export function CategorySidebar({ parentSlug, subcategories, pathPrefix = "" }: CategorySidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -54,8 +55,8 @@ export function CategorySidebar({ parentSlug, subcategories }: CategorySidebarPr
             {subcategories.map((sub) => (
               <li key={sub.id}>
                 <Link
-                  href={`/categorii/${parentSlug}/${sub.slug}`}
-                  className="text-sm hover:text-primary transition-colors"
+                  href={`${pathPrefix}/categorii/${parentSlug}/${sub.slug}`}
+                  className="text-sm hover:text-secondary transition-colors"
                 >
                   {sub.name}
                 </Link>

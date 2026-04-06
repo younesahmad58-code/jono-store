@@ -1,12 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { ShoppingCart, Minus, Plus, Check } from "lucide-react";
+import { ShoppingCart, Minus, Plus, Check, Truck, RotateCcw, ShieldCheck, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatPrice, calculateDiscount } from "@/lib/utils";
 import { useCart, type CartItem } from "@/lib/cart";
-import { toast } from "sonner";
 
 interface ProductInfoProps {
   id: string;
@@ -21,7 +20,7 @@ interface ProductInfoProps {
 
 export function ProductInfo({ id, name, slug, price, salePrice, sku, stock, imageUrl }: ProductInfoProps) {
   const [quantity, setQuantity] = useState(1);
-  const { addItem } = useCart();
+  const { addItem, openDrawer } = useCart();
 
   const discount = salePrice ? calculateDiscount(price, salePrice) : 0;
   const effectivePrice = salePrice ?? price;
@@ -30,7 +29,7 @@ export function ProductInfo({ id, name, slug, price, salePrice, sku, stock, imag
     if (stock <= 0) return;
     const item: Omit<CartItem, "quantity"> = { id, name, slug, price, salePrice, imageUrl, sku, stock };
     addItem(item, quantity);
-    toast.success(`${name} a fost adăugat în coș`);
+    openDrawer();
   };
 
   return (
@@ -38,7 +37,7 @@ export function ProductInfo({ id, name, slug, price, salePrice, sku, stock, imag
       <h1 className="text-2xl md:text-3xl font-bold">{name}</h1>
 
       <div className="flex items-center gap-3">
-        <span className="text-3xl font-bold text-primary">
+        <span className="text-3xl font-bold text-secondary">
           {formatPrice(effectivePrice)}
         </span>
         {salePrice && (
@@ -66,11 +65,11 @@ export function ProductInfo({ id, name, slug, price, salePrice, sku, stock, imag
 
       {stock > 0 && (
         <div className="flex items-center gap-3 pt-2">
-          <div className="flex items-center border rounded-md">
+          <div className="flex items-center border border-secondary/20">
             <Button
               variant="ghost"
               size="icon"
-              className="h-10 w-10"
+              className="h-10 w-10 rounded-none text-secondary hover:bg-primary"
               onClick={() => setQuantity((q) => Math.max(1, q - 1))}
             >
               <Minus className="h-4 w-4" />
@@ -79,19 +78,38 @@ export function ProductInfo({ id, name, slug, price, salePrice, sku, stock, imag
             <Button
               variant="ghost"
               size="icon"
-              className="h-10 w-10"
+              className="h-10 w-10 rounded-none text-secondary hover:bg-primary"
               onClick={() => setQuantity((q) => Math.min(stock, q + 1))}
             >
               <Plus className="h-4 w-4" />
             </Button>
           </div>
 
-          <Button size="lg" className="gap-2 flex-1" onClick={handleAdd}>
+          <Button size="lg" variant="secondary" className="gap-2 flex-1 rounded-none" onClick={handleAdd}>
             <ShoppingCart className="h-5 w-5" />
             Adaugă în coș
           </Button>
         </div>
       )}
+
+      <div className="grid grid-cols-2 gap-3 pt-4 mt-4 border-t border-border">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Truck className="h-4 w-4 text-secondary flex-shrink-0" />
+          <span>Livrare în 2-3 zile</span>
+        </div>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <RotateCcw className="h-4 w-4 text-secondary flex-shrink-0" />
+          <span>Retur gratuit 14 zile</span>
+        </div>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <ShieldCheck className="h-4 w-4 text-secondary flex-shrink-0" />
+          <span>Plată securizată</span>
+        </div>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Phone className="h-4 w-4 text-secondary flex-shrink-0" />
+          <span>Suport: 0721 123 456</span>
+        </div>
+      </div>
     </div>
   );
 }

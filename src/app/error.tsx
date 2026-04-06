@@ -9,6 +9,7 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  console.error("Page error:", error);
   return (
     <div className="min-h-[60vh] flex flex-col items-center justify-center px-4">
       <h1 className="text-4xl font-bold text-destructive mb-4">Eroare</h1>

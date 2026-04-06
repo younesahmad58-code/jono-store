@@ -1,10 +1,10 @@
 "use server";
 
 import bcrypt from "bcrypt";
+import { AuthError } from "next-auth";
 import { signIn, signOut } from "@/auth";
 import { prisma } from "@/lib/db";
 import { loginSchema, registerSchema } from "@/lib/validations/auth";
-import { AuthError } from "next-auth";
 
 interface ActionResult {
   success: boolean;
@@ -76,13 +76,14 @@ export async function registerAction(formData: FormData): Promise<ActionResult> 
       password: parsed.data.password,
       redirect: false,
     });
-    return { success: true };
   } catch (error) {
     if (error instanceof AuthError) {
       return { success: true };
     }
     throw error;
   }
+
+  return { success: true };
 }
 
 export async function logoutAction() {

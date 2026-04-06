@@ -10,7 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { RichTextEditor } from "./RichTextEditor";
+import dynamic from "next/dynamic";
+const RichTextEditor = dynamic(() => import("./RichTextEditor").then(m => ({ default: m.RichTextEditor })), { ssr: false, loading: () => <div className="border rounded-md p-4 min-h-[200px] animate-pulse bg-muted" /> });
 import { ImageUploader } from "./ImageUploader";
 import { CategoryTreeSelector } from "./CategoryTreeSelector";
 import { slugify } from "@/lib/utils";
@@ -41,6 +42,9 @@ interface ProductFormProps {
     stock: number;
     weight: number | null;
     status: string;
+    isBestseller: boolean;
+    isTrending: boolean;
+    isRecommended: boolean;
     categoryId: string;
     images: ImageItem[];
   };
@@ -70,6 +74,9 @@ export function ProductForm({ categories, product }: ProductFormProps) {
       stock: product?.stock ?? 0,
       weight: product?.weight ?? undefined,
       status: (product?.status as "DRAFT" | "PUBLISHED" | "HIDDEN") ?? "DRAFT",
+      isBestseller: product?.isBestseller ?? false,
+      isTrending: product?.isTrending ?? false,
+      isRecommended: product?.isRecommended ?? false,
       categoryId: product?.categoryId ?? "",
     },
   });
@@ -145,7 +152,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
             </div>
             <div className="space-y-2">
               <Label htmlFor="salePrice">Preț redus (RON)</Label>
-              <Input id="salePrice" type="number" step="0.01" {...register("salePrice", { valueAsNumber: true })} />
+              <Input id="salePrice" type="number" step="0.01" {...register("salePrice", { setValueAs: (v: string) => v === "" ? undefined : Number(v) })} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="stock">Stoc</Label>
@@ -154,7 +161,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
             </div>
             <div className="space-y-2">
               <Label htmlFor="weight">Greutate (kg)</Label>
-              <Input id="weight" type="number" step="0.001" {...register("weight", { valueAsNumber: true })} />
+              <Input id="weight" type="number" step="0.001" {...register("weight", { setValueAs: (v: string) => v === "" ? undefined : Number(v) })} />
             </div>
           </div>
 
@@ -196,6 +203,39 @@ export function ProductForm({ categories, product }: ProductFormProps) {
                 <SelectItem value="HIDDEN">Ascuns</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          <div className="space-y-4 border rounded-lg p-6">
+            <h2 className="font-semibold">Vizibilitate pe prima pagină</h2>
+            <div className="space-y-3">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={watch("isBestseller")}
+                  onChange={(e) => setValue("isBestseller", e.target.checked)}
+                  className="h-4 w-4 rounded border-input accent-primary"
+                />
+                <span className="text-sm">Bestseller</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={watch("isTrending")}
+                  onChange={(e) => setValue("isTrending", e.target.checked)}
+                  className="h-4 w-4 rounded border-input accent-primary"
+                />
+                <span className="text-sm">În Trend</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={watch("isRecommended")}
+                  onChange={(e) => setValue("isRecommended", e.target.checked)}
+                  className="h-4 w-4 rounded border-input accent-primary"
+                />
+                <span className="text-sm">Recomandat</span>
+              </label>
+            </div>
           </div>
         </div>
       </div>

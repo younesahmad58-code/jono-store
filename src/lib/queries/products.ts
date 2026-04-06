@@ -5,11 +5,16 @@ import { ProductStatus } from "@/generated/prisma/client";
 interface ProductFilters {
   categoryId?: string;
   categoryIds?: string[];
+  excludeCategoryIds?: string[];
   minPrice?: number;
   maxPrice?: number;
   inStock?: boolean;
   status?: ProductStatus;
   search?: string;
+  isBestseller?: boolean;
+  isTrending?: boolean;
+  isRecommended?: boolean;
+  onSale?: boolean;
 }
 
 interface PaginationParams {
@@ -28,9 +33,44 @@ export async function getNewProducts(limit = 10) {
   });
 }
 
-export async function getProductsOnSale(limit = 10) {
+export async function getProductsOnSale(limit = 10, excludeCategoryIds?: string[]) {
+  const where: Record<string, unknown> = { status: "PUBLISHED", salePrice: { not: null } };
+  if (excludeCategoryIds?.length) where.categoryId = { notIn: excludeCategoryIds };
   return prisma.product.findMany({
-    where: { status: "PUBLISHED", salePrice: { not: null } },
+    where,
+    include: { images: { orderBy: { sortOrder: "asc" }, take: 1 }, category: true },
+    orderBy: { createdAt: "desc" },
+    take: limit,
+  });
+}
+
+export async function getBestsellers(limit = 10, excludeCategoryIds?: string[]) {
+  const where: Record<string, unknown> = { status: "PUBLISHED", isBestseller: true };
+  if (excludeCategoryIds?.length) where.categoryId = { notIn: excludeCategoryIds };
+  return prisma.product.findMany({
+    where,
+    include: { images: { orderBy: { sortOrder: "asc" }, take: 1 }, category: true },
+    orderBy: { createdAt: "desc" },
+    take: limit,
+  });
+}
+
+export async function getTrendingProducts(limit = 10, excludeCategoryIds?: string[]) {
+  const where: Record<string, unknown> = { status: "PUBLISHED", isTrending: true };
+  if (excludeCategoryIds?.length) where.categoryId = { notIn: excludeCategoryIds };
+  return prisma.product.findMany({
+    where,
+    include: { images: { orderBy: { sortOrder: "asc" }, take: 1 }, category: true },
+    orderBy: { createdAt: "desc" },
+    take: limit,
+  });
+}
+
+export async function getRecommendedProducts(limit = 10, excludeCategoryIds?: string[]) {
+  const where: Record<string, unknown> = { status: "PUBLISHED", isRecommended: true };
+  if (excludeCategoryIds?.length) where.categoryId = { notIn: excludeCategoryIds };
+  return prisma.product.findMany({
+    where,
     include: { images: { orderBy: { sortOrder: "asc" }, take: 1 }, category: true },
     orderBy: { createdAt: "desc" },
     take: limit,
@@ -70,6 +110,15 @@ export async function getProductsByCategory(
   if (filters.inStock) {
     where.stock = { gt: 0 };
   }
+
+  if (filters.excludeCategoryIds?.length) {
+    where.categoryId = { ...(where.categoryId as Record<string, unknown> ?? {}), notIn: filters.excludeCategoryIds };
+  }
+
+  if (filters.isBestseller) where.isBestseller = true;
+  if (filters.isTrending) where.isTrending = true;
+  if (filters.isRecommended) where.isRecommended = true;
+  if (filters.onSale) where.salePrice = { not: null };
 
   if (filters.search) {
     where.OR = [

@@ -1,13 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { ChevronDown } from "lucide-react";
 
 const sortOptions = [
   { value: "createdAt-desc", label: "Cele mai noi" },
@@ -23,8 +17,8 @@ export function SortDropdown() {
 
   const currentSort = `${searchParams.get("sortBy") || "createdAt"}-${searchParams.get("sortOrder") || "desc"}`;
 
-  function handleSort(value: string | null) {
-    if (!value) return;
+  function handleSort(e: React.ChangeEvent<HTMLSelectElement>) {
+    const value = e.target.value;
     const [sortBy, sortOrder] = value.split("-");
     const params = new URLSearchParams(searchParams.toString());
     params.set("sortBy", sortBy);
@@ -34,17 +28,19 @@ export function SortDropdown() {
   }
 
   return (
-    <Select value={currentSort} onValueChange={handleSort}>
-      <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder="Sortare" />
-      </SelectTrigger>
-      <SelectContent>
+    <div className="relative inline-block">
+      <select
+        value={currentSort}
+        onChange={handleSort}
+        className="h-9 pl-3 pr-9 border border-border bg-white text-sm rounded-sm appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring"
+      >
         {sortOptions.map((opt) => (
-          <SelectItem key={opt.value} value={opt.value}>
+          <option key={opt.value} value={opt.value}>
             {opt.label}
-          </SelectItem>
+          </option>
         ))}
-      </SelectContent>
-    </Select>
+      </select>
+      <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+    </div>
   );
 }

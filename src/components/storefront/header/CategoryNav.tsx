@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronDown, Menu, X } from "lucide-react";
+import { ChevronDown, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
@@ -16,18 +16,20 @@ interface Category {
 
 interface CategoryNavProps {
   categories: Category[];
+  mode?: "main" | "pets";
 }
 
-export function CategoryNav({ categories }: CategoryNavProps) {
+export function CategoryNav({ categories, mode = "main" }: CategoryNavProps) {
   const [openId, setOpenId] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const pathPrefix = mode === "pets" ? "/pets" : "";
 
   const toggleCategory = (id: string) => {
     setOpenId((prev) => (prev === id ? null : id));
   };
 
   return (
-    <nav className="bg-white border-b">
+    <nav className="bg-white border-b border-border">
       <div className="container mx-auto px-4">
         {/* Desktop */}
         <div className="hidden md:flex items-center gap-1 h-12">
@@ -36,8 +38,8 @@ export function CategoryNav({ categories }: CategoryNavProps) {
               <button
                 onClick={() => toggleCategory(cat.id)}
                 className={cn(
-                  "flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-md transition-colors hover:bg-muted",
-                  openId === cat.id && "bg-muted"
+                  "flex items-center gap-1 px-3 py-2 text-sm font-medium transition-colors hover:bg-primary",
+                  openId === cat.id && "bg-primary"
                 )}
               >
                 {cat.name}
@@ -56,20 +58,20 @@ export function CategoryNav({ categories }: CategoryNavProps) {
                     className="fixed inset-0 z-10"
                     onClick={() => setOpenId(null)}
                   />
-                  <div className="absolute left-0 top-full z-20 mt-1 w-56 rounded-md border bg-white shadow-lg py-1">
+                  <div className="absolute left-0 top-full z-20 mt-1 w-56 border border-border bg-white shadow-lg py-1">
                     <Link
-                      href={`/categorii/${cat.slug}`}
+                      href={`${pathPrefix}/categorii/${cat.slug}`}
                       onClick={() => setOpenId(null)}
-                      className="block px-4 py-2 text-sm font-medium text-primary hover:bg-muted"
+                      className="block px-4 py-2 text-sm font-medium text-secondary hover:bg-primary"
                     >
                       Toate din {cat.name}
                     </Link>
                     {cat.children.map((child) => (
                       <Link
                         key={child.id}
-                        href={`/categorii/${cat.slug}/${child.slug}`}
+                        href={`${pathPrefix}/categorii/${cat.slug}/${child.slug}`}
                         onClick={() => setOpenId(null)}
-                        className="block px-4 py-2 text-sm hover:bg-muted"
+                        className="block px-4 py-2 text-sm hover:bg-primary"
                       >
                         {child.name}
                       </Link>
@@ -92,10 +94,10 @@ export function CategoryNav({ categories }: CategoryNavProps) {
               <SheetTitle className="px-4 pt-4 pb-2">Categorii</SheetTitle>
               <div className="overflow-y-auto h-full pb-20">
                 {categories.map((cat) => (
-                  <div key={cat.id} className="border-b">
+                  <div key={cat.id} className="border-b border-border">
                     <button
                       onClick={() => toggleCategory(cat.id)}
-                      className="flex items-center justify-between w-full px-4 py-3 text-sm font-medium hover:bg-muted"
+                      className="flex items-center justify-between w-full px-4 py-3 text-sm font-medium hover:bg-primary"
                     >
                       {cat.name}
                       {cat.children.length > 0 && (
@@ -108,20 +110,20 @@ export function CategoryNav({ categories }: CategoryNavProps) {
                       )}
                     </button>
                     {openId === cat.id && (
-                      <div className="bg-muted/50 pb-1">
+                      <div className="bg-primary/30 pb-1">
                         <Link
-                          href={`/categorii/${cat.slug}`}
+                          href={`${pathPrefix}/categorii/${cat.slug}`}
                           onClick={() => setMobileOpen(false)}
-                          className="block px-6 py-2 text-sm font-medium text-primary"
+                          className="block px-6 py-2 text-sm font-medium text-secondary"
                         >
                           Toate din {cat.name}
                         </Link>
                         {cat.children.map((child) => (
                           <Link
                             key={child.id}
-                            href={`/categorii/${cat.slug}/${child.slug}`}
+                            href={`${pathPrefix}/categorii/${cat.slug}/${child.slug}`}
                             onClick={() => setMobileOpen(false)}
-                            className="block px-6 py-2 text-sm"
+                            className="block px-6 py-2 text-sm hover:bg-primary"
                           >
                             {child.name}
                           </Link>

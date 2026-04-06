@@ -47,6 +47,9 @@ export default async function EditProductPage({ params }: Props) {
           stock: product.stock,
           weight: product.weight ? Number(product.weight) : null,
           status: product.status,
+          isBestseller: product.isBestseller,
+          isTrending: product.isTrending,
+          isRecommended: product.isRecommended,
           categoryId: product.categoryId,
           images: product.images.map((img) => ({ url: img.url, alt: img.alt })),
         }}

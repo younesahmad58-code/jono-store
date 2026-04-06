@@ -20,7 +20,7 @@ export async function getDashboardStats() {
 
   return {
     todayOrders,
-    todayRevenue: todayRevenue._sum.total?.toNumber() ?? 0,
+    todayRevenue: Number(todayRevenue._sum.total ?? 0),
     pendingOrders,
     lowStockCount,
   };

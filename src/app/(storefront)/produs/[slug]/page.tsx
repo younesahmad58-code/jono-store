@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { getProductBySlug } from "@/lib/queries";
 import { ImageGallery, ProductInfo, ProductDescription, SimilarProducts } from "@/components/storefront/product";
 
@@ -35,11 +36,11 @@ export default async function ProductPage({ params }: Props) {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
-        <a href="/" className="hover:text-foreground">Acasă</a>
+        <Link href="/" className="hover:text-foreground">Acasă</Link>
         <span>/</span>
-        <a href={`/categorii/${breadcrumbCategory.slug}`} className="hover:text-foreground">
+        <Link href={`/categorii/${breadcrumbCategory.slug}`} className="hover:text-foreground">
           {breadcrumbCategory.name}
-        </a>
+        </Link>
         <span>/</span>
         <span className="text-foreground font-medium">{product.name}</span>
       </div>

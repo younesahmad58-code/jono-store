@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { getCategoryBySlug, getProductsByCategory } from "@/lib/queries";
 import { ProductCard } from "@/components/storefront/ProductCard";
 import { CategorySidebar, SortDropdown } from "@/components/storefront/category";
@@ -53,13 +54,13 @@ export default async function CategoryPage({ params, searchParams }: Props) {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
-        <a href="/" className="hover:text-foreground">Acasă</a>
+        <Link href="/" className="hover:text-foreground">Acasă</Link>
         <span>/</span>
         {category.parent && (
           <>
-            <a href={`/categorii/${category.parent.slug}`} className="hover:text-foreground">
+            <Link href={`/categorii/${category.parent.slug}`} className="hover:text-foreground">
               {category.parent.name}
-            </a>
+            </Link>
             <span>/</span>
           </>
         )}

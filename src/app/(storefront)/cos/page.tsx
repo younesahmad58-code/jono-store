@@ -32,23 +32,23 @@ export default function CartPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-4">
           {items.map((item) => (
-            <div key={item.id} className="flex gap-4 p-4 border rounded-lg">
-              <div className="relative w-20 h-20 flex-shrink-0 rounded-md overflow-hidden">
+            <div key={item.id} className="flex flex-wrap sm:flex-nowrap gap-4 p-4 border">
+              <div className="relative w-20 h-20 flex-shrink-0 overflow-hidden">
                 <Image src={item.imageUrl} alt={item.name} fill className="object-cover" sizes="80px" />
               </div>
 
               <div className="flex-1 min-w-0">
-                <Link href={`/produs/${item.slug}`} className="font-medium hover:text-primary line-clamp-1">
+                <Link href={`/produs/${item.slug}`} className="font-medium hover:text-secondary line-clamp-1">
                   {item.name}
                 </Link>
                 <p className="text-sm text-muted-foreground">SKU: {item.sku}</p>
-                <p className="font-semibold text-primary mt-1">
+                <p className="font-semibold text-secondary mt-1">
                   {formatPrice(item.salePrice ?? item.price)}
                 </p>
               </div>
 
-              <div className="flex items-center gap-2">
-                <div className="flex items-center border rounded-md">
+              <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
+                <div className="flex items-center border border-secondary/20">
                   <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => updateQuantity(item.id, item.quantity - 1)}>
                     <Minus className="h-3 w-3" />
                   </Button>
@@ -58,7 +58,7 @@ export default function CartPage() {
                   </Button>
                 </div>
 
-                <span className="font-semibold w-24 text-right hidden sm:block">
+                <span className="font-semibold text-right">
                   {formatPrice((item.salePrice ?? item.price) * item.quantity)}
                 </span>
 
@@ -70,7 +70,7 @@ export default function CartPage() {
           ))}
         </div>
 
-        <div className="border rounded-lg p-6 h-fit sticky top-20">
+        <div className="border p-6 h-fit sticky top-20">
           <h2 className="font-bold text-lg mb-4">Sumar comandă</h2>
 
           <div className="space-y-2 text-sm">
@@ -96,7 +96,7 @@ export default function CartPage() {
             <span>{formatPrice(total)}</span>
           </div>
 
-          <Link href="/checkout" className={buttonVariants({ size: "lg", className: "w-full mt-4" })}>Finalizează comanda</Link>
+          <Link href="/checkout" className={buttonVariants({ size: "lg", variant: "secondary", className: "w-full mt-4 rounded-none" })}>Finalizează comanda</Link>
 
           <Link href="/" className={buttonVariants({ variant: "outline", className: "w-full mt-2" })}>Continuă cumpărăturile</Link>
         </div>

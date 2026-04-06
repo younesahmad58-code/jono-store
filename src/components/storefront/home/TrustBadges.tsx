@@ -9,14 +9,16 @@ const badges = [
 
 export function TrustBadges() {
   return (
-    <section className="bg-muted/50 border-y">
-      <div className="container mx-auto px-4 py-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <section className="bg-white border-y border-border">
+      <div className="container mx-auto px-4 py-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {badges.map((badge) => (
             <div key={badge.label} className="flex items-center gap-3 justify-center">
-              <badge.icon className="h-8 w-8 text-primary flex-shrink-0" />
+              <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                <badge.icon className="h-6 w-6 text-secondary" />
+              </div>
               <div>
-                <p className="font-semibold text-sm">{badge.label}</p>
+                <p className="font-bold text-base">{badge.label}</p>
                 <p className="text-xs text-muted-foreground">{badge.sublabel}</p>
               </div>
             </div>

@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatPrice, calculateDiscount } from "@/lib/utils";
 import { useCart, type CartItem } from "@/lib/cart";
-import { toast } from "sonner";
 
 interface ProductCardProps {
   id: string;
@@ -30,7 +29,7 @@ export function ProductCard({
   sku,
   stock,
 }: ProductCardProps) {
-  const { addItem } = useCart();
+  const { addItem, openDrawer } = useCart();
   const discount = salePrice ? calculateDiscount(price, salePrice) : 0;
   const effectivePrice = salePrice ?? price;
 
@@ -41,65 +40,72 @@ export function ProductCard({
     if (stock <= 0) return;
 
     const item: Omit<CartItem, "quantity"> = {
-      id,
-      name,
-      slug,
-      price,
-      salePrice,
-      imageUrl,
-      sku,
-      stock,
+      id, name, slug, price, salePrice, imageUrl, sku, stock,
     };
-    addItem(item);
-    toast.success(`${name} a fost adăugat în coș`);
+    addItem(item, 1);
+    openDrawer();
   };
 
   return (
     <Link
       href={`/produs/${slug}`}
-      className="group bg-white rounded-lg border hover:shadow-md transition-shadow overflow-hidden flex flex-col"
+      className="group bg-white border border-border hover:shadow-md transition-all overflow-hidden flex flex-col"
     >
-      <div className="relative aspect-square">
+      <div className="relative aspect-square overflow-hidden">
         <Image
           src={imageUrl}
           alt={name}
           fill
-          className="object-cover group-hover:scale-105 transition-transform"
-          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+          className="object-cover group-hover:scale-[1.02] transition-transform duration-300"
+          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
         />
         {discount > 0 && (
-          <Badge className="absolute top-2 left-2 bg-red-600 hover:bg-red-600">
+          <Badge className="absolute top-2 left-2 bg-red-600 hover:bg-red-600 text-white rounded-none text-xs">
             -{discount}%
           </Badge>
         )}
         {stock <= 0 && (
           <div className="absolute inset-0 bg-white/60 flex items-center justify-center">
-            <Badge variant="secondary" className="text-sm">Stoc epuizat</Badge>
+            <Badge variant="outline" className="text-sm bg-white rounded-none">Stoc epuizat</Badge>
           </div>
         )}
       </div>
 
-      <div className="p-3 flex flex-col flex-1">
-        <h3 className="font-medium text-sm line-clamp-2 mb-2 flex-1">{name}</h3>
+      <div className="p-4 flex flex-col flex-1">
+        <h3 className="font-medium text-sm text-foreground line-clamp-2 mb-2 flex-1">{name}</h3>
 
-        <div className="flex items-center gap-2 mb-2">
-          <span className="font-bold text-primary">{formatPrice(effectivePrice)}</span>
+        <div className="flex items-center gap-2 mb-1">
+          <span className="font-bold text-secondary">{formatPrice(effectivePrice)}</span>
           {salePrice && (
-            <span className="text-sm text-muted-foreground line-through">
+            <span className="text-xs text-muted-foreground line-through">
               {formatPrice(price)}
             </span>
           )}
         </div>
 
-        <Button
-          size="sm"
-          className="w-full gap-2"
-          onClick={handleAddToCart}
-          disabled={stock <= 0}
-        >
-          <ShoppingCart className="h-4 w-4" />
-          {stock > 0 ? "Adaugă în coș" : "Indisponibil"}
-        </Button>
+        {stock > 5 ? (
+          <p className="text-xs font-medium text-green-600 mb-3">În stoc</p>
+        ) : stock > 0 ? (
+          <p className="text-xs font-medium text-amber-600 mb-3">Stoc limitat</p>
+        ) : (
+          <p className="text-xs font-medium text-destructive mb-3">Indisponibil</p>
+        )}
+
+        {stock > 0 ? (
+          <Button
+            size="sm"
+            variant="secondary"
+            className="w-full gap-2 rounded-none"
+            onClick={handleAddToCart}
+          >
+            <ShoppingCart className="h-4 w-4" />
+            Adaugă în coș
+          </Button>
+        ) : (
+          <Button size="sm" variant="secondary" className="w-full rounded-none" disabled>
+            Indisponibil
+          </Button>
+        )}
       </div>
     </Link>
   );

@@ -10,6 +10,7 @@ interface ActionResult {
 }
 
 const NUMERIC_FIELDS = new Set(["price", "salePrice", "stock", "weight"]);
+const BOOLEAN_FIELDS = new Set(["isBestseller", "isTrending", "isRecommended"]);
 
 function parseFormData(formData: FormData): Record<string, unknown> {
   const raw: Record<string, unknown> = {};
@@ -18,10 +19,15 @@ function parseFormData(formData: FormData): Record<string, unknown> {
     if (NUMERIC_FIELDS.has(key)) {
       const str = String(value);
       raw[key] = str === "" ? undefined : Number(str);
+    } else if (BOOLEAN_FIELDS.has(key)) {
+      raw[key] = String(value) === "true" || String(value) === "on";
     } else {
       raw[key] = value;
     }
   });
+  for (const field of BOOLEAN_FIELDS) {
+    if (!(field in raw)) raw[field] = false;
+  }
   return raw;
 }
 

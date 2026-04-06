@@ -1,4 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 
 interface ProductDescriptionProps {
   description: string | null;
@@ -13,6 +14,7 @@ export function ProductDescription({ description, weight, sku, ean }: ProductDes
       <TabsList>
         <TabsTrigger value="description">Descriere</TabsTrigger>
         <TabsTrigger value="specs">Specificații</TabsTrigger>
+        <TabsTrigger value="reviews">Recenzii</TabsTrigger>
       </TabsList>
 
       <TabsContent value="description" className="mt-4">
@@ -47,6 +49,15 @@ export function ProductDescription({ description, weight, sku, ean }: ProductDes
             )}
           </tbody>
         </table>
+      </TabsContent>
+
+      <TabsContent value="reviews" className="mt-4">
+        <div className="text-center py-8">
+          <p className="text-muted-foreground mb-4">Încă nu există recenzii pentru acest produs.</p>
+          <Button variant="secondary" className="rounded-none" disabled>
+            Scrie o recenzie
+          </Button>
+        </div>
       </TabsContent>
     </Tabs>
   );

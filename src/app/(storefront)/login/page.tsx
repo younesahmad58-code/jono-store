@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginInput } from "@/lib/validations/auth";
@@ -16,6 +16,9 @@ import { toast } from "sonner";
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const rawCallback = searchParams.get("callbackUrl");
+  const callbackUrl = rawCallback?.startsWith("/") ? rawCallback : "/";
 
   const {
     register,
@@ -34,7 +37,7 @@ export default function LoginPage() {
     const result = await loginAction(formData);
     if (result.success) {
       toast.success("Autentificare reușită");
-      router.push("/");
+      router.push(callbackUrl);
       router.refresh();
     } else {
       toast.error(result.error ?? "Eroare la autentificare");
@@ -83,7 +86,7 @@ export default function LoginPage() {
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
             Nu ai cont?{" "}
-            <Link href="/inregistrare" className="text-primary font-medium hover:underline">
+            <Link href="/inregistrare" className="text-secondary font-medium hover:underline">
               Înregistrează-te
             </Link>
           </p>

@@ -22,6 +22,9 @@ interface CartContextType {
   clearCart: () => void;
   totalItems: number;
   subtotal: number;
+  drawerOpen: boolean;
+  openDrawer: () => void;
+  closeDrawer: () => void;
 }
 
 export const CartContext = createContext<CartContextType>({
@@ -32,9 +35,13 @@ export const CartContext = createContext<CartContextType>({
   clearCart: () => {},
   totalItems: 0,
   subtotal: 0,
+  drawerOpen: false,
+  openDrawer: () => {},
+  closeDrawer: () => {},
 });
 
-const CART_STORAGE_KEY = "aramsweet-cart";
+const CART_STORAGE_KEY = "jono-cart";
+const OLD_CART_KEY = "jonhome-cart";
 
 function loadCart(): CartItem[] {
   if (typeof window === "undefined") return [];
@@ -54,8 +61,17 @@ function saveCart(items: CartItem[]) {
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [mounted, setMounted] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const openDrawer = useCallback(() => setDrawerOpen(true), []);
+  const closeDrawer = useCallback(() => setDrawerOpen(false), []);
 
   useEffect(() => {
+    const oldData = localStorage.getItem(OLD_CART_KEY);
+    if (oldData && !localStorage.getItem(CART_STORAGE_KEY)) {
+      localStorage.setItem(CART_STORAGE_KEY, oldData);
+      localStorage.removeItem(OLD_CART_KEY);
+    }
     setItems(loadCart());
     setMounted(true);
   }, []);
@@ -109,7 +125,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   return (
     <CartContext.Provider
-      value={{ items, addItem, removeItem, updateQuantity, clearCart, totalItems, subtotal }}
+      value={{ items, addItem, removeItem, updateQuantity, clearCart, totalItems, subtotal, drawerOpen, openDrawer, closeDrawer }}
     >
       {children}
     </CartContext.Provider>

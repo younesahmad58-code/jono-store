@@ -40,6 +40,17 @@ export async function getCategoryTree() {
   });
 }
 
+const PETS_SLUG = "pets";
+
+export async function getPetCategoryIds(): Promise<string[]> {
+  const petsParent = await prisma.category.findUnique({
+    where: { slug: PETS_SLUG },
+    include: { children: { select: { id: true } } },
+  });
+  if (!petsParent) return [];
+  return [petsParent.id, ...petsParent.children.map((c) => c.id)];
+}
+
 export async function getAllCategories() {
   return prisma.category.findMany({
     include: {

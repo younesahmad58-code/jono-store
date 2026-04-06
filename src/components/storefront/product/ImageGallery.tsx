@@ -18,7 +18,7 @@ export function ImageGallery({ images, productName }: ImageGalleryProps) {
 
   return (
     <div className="space-y-3">
-      <div className="relative aspect-square rounded-lg overflow-hidden border">
+      <div className="relative aspect-square overflow-hidden border">
         <Image
           src={displayImages[selected].url}
           alt={displayImages[selected].alt}
@@ -36,7 +36,7 @@ export function ImageGallery({ images, productName }: ImageGalleryProps) {
               key={img.id}
               onClick={() => setSelected(i)}
               className={cn(
-                "relative w-16 h-16 rounded-md overflow-hidden border-2 flex-shrink-0 transition-colors",
+                "relative w-16 h-16 overflow-hidden border-2 flex-shrink-0 transition-colors",
                 i === selected ? "border-primary" : "border-transparent hover:border-muted-foreground/50"
               )}
             >

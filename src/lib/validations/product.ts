@@ -11,6 +11,9 @@ export const productSchema = z.object({
   stock: z.number().int().min(0, "Stocul nu poate fi negativ"),
   weight: z.number().positive().optional().nullable(),
   status: z.enum(["DRAFT", "PUBLISHED", "HIDDEN"]),
+  isBestseller: z.boolean(),
+  isTrending: z.boolean(),
+  isRecommended: z.boolean(),
   categoryId: z.string().uuid("Selectează o categorie"),
 });
 

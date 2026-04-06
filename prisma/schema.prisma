@@ -82,8 +82,11 @@ model Product {
   ean         String?        @db.VarChar(13)
   stock       Int            @default(0)
   weight      Decimal?       @db.Decimal(8, 3)
-  status      ProductStatus  @default(DRAFT)
-  categoryId  String         @db.Uuid
+  status        ProductStatus  @default(DRAFT)
+  isBestseller  Boolean        @default(false)
+  isTrending    Boolean        @default(false)
+  isRecommended Boolean        @default(false)
+  categoryId    String         @db.Uuid
   category    Category       @relation(fields: [categoryId], references: [id])
   images      ProductImage[]
   orderItems  OrderItem[]

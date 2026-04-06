@@ -42,3 +42,11 @@ next-env.d.ts
 
 /src/generated/prisma
 /public/uploads
+
+# dev config
+CLAUDE.md
+AGENTS.md
+.claude/
+audit.zip
+
+.vercel

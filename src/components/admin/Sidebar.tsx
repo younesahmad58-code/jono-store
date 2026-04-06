@@ -35,7 +35,7 @@ function NavContent({ onNavigate }: { onNavigate?: () => void }) {
     <div className="flex flex-col h-full">
       <div className="px-4 py-5 border-b">
         <Link href="/admin" className="text-lg font-bold text-primary" onClick={onNavigate}>
-          AramSweet
+          JONO
         </Link>
         <p className="text-xs text-muted-foreground mt-0.5">Admin Panel</p>
       </div>
@@ -100,7 +100,7 @@ export function Sidebar() {
             <NavContent onNavigate={() => setOpen(false)} />
           </SheetContent>
         </Sheet>
-        <span className="ml-3 font-bold text-primary">AramSweet Admin</span>
+        <span className="ml-3 font-bold text-primary">JONO Admin</span>
       </div>
     </>
   );
