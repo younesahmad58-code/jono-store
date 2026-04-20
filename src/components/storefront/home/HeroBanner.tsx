@@ -91,7 +91,7 @@ export function HeroBanner({ variant = "main" }: HeroBannerProps) {
   }, [next]);
 
   return (
-    <section className="relative w-full overflow-hidden bg-muted">
+    <section className="group/banner relative w-full overflow-hidden bg-muted">
       <div className="relative aspect-[16/9] sm:aspect-[16/9] lg:aspect-[2/1]">
         {slides.map((slide, i) => (
           <div
@@ -140,14 +140,14 @@ export function HeroBanner({ variant = "main" }: HeroBannerProps) {
         <>
           <button
             onClick={prev}
-            className="absolute left-3 top-1/2 -translate-y-1/2 backdrop-blur-md bg-white/15 border border-white/30 hover:bg-white/25 p-2.5 rounded-full transition-colors"
+            className="absolute left-3 top-1/2 -translate-y-1/2 backdrop-blur-md bg-white/15 border border-white/30 hover:bg-white/25 p-2.5 rounded-full transition-all opacity-0 group-hover/banner:opacity-100"
             aria-label="Anterior"
           >
             <ChevronLeft className="h-5 w-5 text-white" />
           </button>
           <button
             onClick={next}
-            className="absolute right-3 top-1/2 -translate-y-1/2 backdrop-blur-md bg-white/15 border border-white/30 hover:bg-white/25 p-2.5 rounded-full transition-colors"
+            className="absolute right-3 top-1/2 -translate-y-1/2 backdrop-blur-md bg-white/15 border border-white/30 hover:bg-white/25 p-2.5 rounded-full transition-all opacity-0 group-hover/banner:opacity-100"
             aria-label="Următor"
           >
             <ChevronRight className="h-5 w-5 text-white" />
