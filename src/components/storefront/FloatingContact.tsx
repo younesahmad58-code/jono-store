@@ -30,24 +30,32 @@ export function FloatingContact() {
   return (
     <div ref={containerRef} className="fixed bottom-6 right-5 z-50 flex flex-col items-center gap-3">
       {open && (
-        <div className="flex flex-col items-center gap-2.5">
+        <div className="flex flex-col items-end gap-2.5">
           <a
             href="https://wa.me/40721123456"
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => setOpen(false)}
-            aria-label="WhatsApp"
-            className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg bg-[#25D366] text-white hover:opacity-90 transition-opacity"
+            className="flex items-center gap-3"
           >
-            <WhatsAppIcon className="h-6 w-6" />
+            <span className="bg-white/80 backdrop-blur-md text-secondary text-sm font-medium px-3 py-1.5 rounded-full shadow-sm">
+              WhatsApp
+            </span>
+            <div className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg bg-[#25D366] text-white hover:opacity-90 transition-opacity">
+              <WhatsAppIcon className="h-6 w-6" />
+            </div>
           </a>
           <a
             href="mailto:contact@jono.ro"
             onClick={() => setOpen(false)}
-            aria-label="Email"
-            className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg backdrop-blur-md bg-white/30 border border-white/40 text-secondary hover:bg-white/50 transition-colors"
+            className="flex items-center gap-3"
           >
-            <Mail className="h-5 w-5" />
+            <span className="bg-white/80 backdrop-blur-md text-secondary text-sm font-medium px-3 py-1.5 rounded-full shadow-sm">
+              Email
+            </span>
+            <div className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg backdrop-blur-md bg-white/30 border border-white/40 text-secondary hover:bg-white/50 transition-colors">
+              <Mail className="h-5 w-5" />
+            </div>
           </a>
         </div>
       )}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -73,9 +73,13 @@ interface HeroBannerProps {
   variant?: "main" | "pets";
 }
 
+const SWIPE_THRESHOLD = 50;
+
 export function HeroBanner({ variant = "main" }: HeroBannerProps) {
   const slides = variant === "pets" ? PETS_SLIDES : MAIN_SLIDES;
   const [current, setCurrent] = useState(0);
+  const dragStart = useRef<number | null>(null);
+  const isDragging = useRef(false);
 
   const next = useCallback(() => {
     setCurrent((prev) => (prev + 1) % slides.length);
@@ -90,8 +94,49 @@ export function HeroBanner({ variant = "main" }: HeroBannerProps) {
     return () => clearInterval(timer);
   }, [next]);
 
+  const handleDragEnd = (delta: number) => {
+    if (Math.abs(delta) >= SWIPE_THRESHOLD) {
+      delta < 0 ? next() : prev();
+    }
+  };
+
+  // Touch handlers
+  const onTouchStart = (e: React.TouchEvent) => {
+    dragStart.current = e.touches[0].clientX;
+  };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (dragStart.current === null) return;
+    handleDragEnd(e.changedTouches[0].clientX - dragStart.current);
+    dragStart.current = null;
+  };
+
+  // Mouse drag handlers
+  const onMouseDown = (e: React.MouseEvent) => {
+    dragStart.current = e.clientX;
+    isDragging.current = false;
+  };
+  const onMouseMove = (e: React.MouseEvent) => {
+    if (dragStart.current !== null && Math.abs(e.clientX - dragStart.current) > 5) {
+      isDragging.current = true;
+    }
+  };
+  const onMouseUp = (e: React.MouseEvent) => {
+    if (dragStart.current === null) return;
+    if (isDragging.current) handleDragEnd(e.clientX - dragStart.current);
+    dragStart.current = null;
+    isDragging.current = false;
+  };
+
   return (
-    <section className="group/banner relative w-full overflow-hidden bg-muted">
+    <section
+      className="group/banner relative w-full overflow-hidden bg-muted select-none"
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
+      onMouseDown={onMouseDown}
+      onMouseMove={onMouseMove}
+      onMouseUp={onMouseUp}
+      onMouseLeave={onMouseUp}
+    >
       <div className="relative aspect-[16/9] sm:aspect-[16/9] lg:aspect-[2/1]">
         {slides.map((slide, i) => (
           <div
@@ -103,9 +148,10 @@ export function HeroBanner({ variant = "main" }: HeroBannerProps) {
               src={slide.src}
               alt={slide.alt}
               fill
-              className="object-cover"
+              className="object-cover pointer-events-none"
               sizes="100vw"
               priority={i === 0}
+              draggable={false}
             />
             <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
             <div className="absolute inset-0 flex items-center">
@@ -126,6 +172,7 @@ export function HeroBanner({ variant = "main" }: HeroBannerProps) {
                   <Link
                     href={slide.ctaHref}
                     className={buttonVariants({ size: "lg", variant: "secondary", className: "rounded-none" })}
+                    onClick={(e) => isDragging.current && e.preventDefault()}
                   >
                     {slide.ctaText}
                   </Link>
