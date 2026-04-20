@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ChevronDown, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
@@ -23,9 +24,25 @@ export function CategoryNav({ categories, mode = "main" }: CategoryNavProps) {
   const [openId, setOpenId] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathPrefix = mode === "pets" ? "/pets" : "";
+  const router = useRouter();
 
-  const toggleCategory = (id: string) => {
-    setOpenId((prev) => (prev === id ? null : id));
+  const handleCategoryClick = (id: string, slug: string) => {
+    if (openId === id) {
+      router.push(`${pathPrefix}/categorii/${slug}`);
+      setOpenId(null);
+    } else {
+      setOpenId(id);
+    }
+  };
+
+  const handleMobileCategoryClick = (id: string, slug: string) => {
+    if (openId === id) {
+      router.push(`${pathPrefix}/categorii/${slug}`);
+      setOpenId(null);
+      setMobileOpen(false);
+    } else {
+      setOpenId(id);
+    }
   };
 
   return (
@@ -36,7 +53,7 @@ export function CategoryNav({ categories, mode = "main" }: CategoryNavProps) {
           {categories.map((cat) => (
             <div key={cat.id} className="relative">
               <button
-                onClick={() => toggleCategory(cat.id)}
+                onClick={() => handleCategoryClick(cat.id, cat.slug)}
                 className={cn(
                   "flex items-center gap-1 px-3 py-2 text-sm font-medium transition-colors hover:bg-primary",
                   openId === cat.id && "bg-primary"
@@ -96,7 +113,7 @@ export function CategoryNav({ categories, mode = "main" }: CategoryNavProps) {
                 {categories.map((cat) => (
                   <div key={cat.id} className="border-b border-border">
                     <button
-                      onClick={() => toggleCategory(cat.id)}
+                      onClick={() => handleMobileCategoryClick(cat.id, cat.slug)}
                       className="flex items-center justify-between w-full px-4 py-3 text-sm font-medium hover:bg-primary"
                     >
                       {cat.name}

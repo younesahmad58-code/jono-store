@@ -69,9 +69,7 @@ export async function Header({ mode = "main", pathname = "" }: HeaderProps) {
         </div>
       </div>
 
-      {pathname !== "/" && pathname !== "/pets" && (
-        <CategoryNav categories={serialized} mode={mode} />
-      )}
+      <CategoryNav categories={serialized} mode={mode} />
     </header>
   );
 }

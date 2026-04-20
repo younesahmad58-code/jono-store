@@ -85,7 +85,7 @@ export function ProductInfo({ id, name, slug, price, salePrice, sku, stock, imag
             </Button>
           </div>
 
-          <Button size="lg" variant="secondary" className="gap-2 flex-1 rounded-none" onClick={handleAdd}>
+          <Button variant="secondary" className="h-10 gap-2 flex-1 rounded-none" onClick={handleAdd}>
             <ShoppingCart className="h-5 w-5" />
             Adaugă în coș
           </Button>

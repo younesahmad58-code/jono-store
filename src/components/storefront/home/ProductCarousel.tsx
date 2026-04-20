@@ -99,7 +99,7 @@ export function ProductCarousel({ title, href, products }: ProductCarouselProps)
           {products.map((product) => (
             <div
               key={product.id}
-              className="w-[180px] sm:w-[200px] md:w-[220px] lg:w-[calc((100%-4*1rem)/5)] flex-shrink-0 snap-start"
+              className="w-[180px] sm:w-[200px] md:w-[220px] lg:w-[calc((100%-4*1rem)/5)] flex-shrink-0 snap-start flex flex-col"
             >
               <ProductCard {...product} />
             </div>

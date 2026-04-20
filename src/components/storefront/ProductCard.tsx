@@ -49,7 +49,7 @@ export function ProductCard({
   return (
     <Link
       href={`/produs/${slug}`}
-      className="group bg-white border border-border hover:shadow-md transition-all overflow-hidden flex flex-col"
+      className="group bg-white border border-border hover:shadow-md transition-all overflow-hidden flex flex-col h-full"
     >
       <div className="relative aspect-square overflow-hidden">
         <Image
@@ -74,7 +74,7 @@ export function ProductCard({
       <div className="p-4 flex flex-col flex-1">
         <h3 className="font-medium text-sm text-foreground line-clamp-2 mb-2 flex-1">{name}</h3>
 
-        <div className="flex items-center gap-2 mb-1">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mb-1">
           <span className="font-bold text-secondary">{formatPrice(effectivePrice)}</span>
           {salePrice && (
             <span className="text-xs text-muted-foreground line-through">

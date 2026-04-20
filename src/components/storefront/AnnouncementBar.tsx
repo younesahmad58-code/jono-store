@@ -23,7 +23,7 @@ export function AnnouncementBar() {
   if (!visible) return null;
 
   return (
-    <div className="bg-secondary text-secondary-foreground text-xs sm:text-sm py-2 px-4 relative text-center">
+    <div className="bg-primary text-secondary text-xs sm:text-sm py-2 px-4 relative text-center">
       <span>
         Transport Gratuit pentru comenzi peste{" "}
         <strong>{FREE_SHIPPING_THRESHOLD} RON</strong>
